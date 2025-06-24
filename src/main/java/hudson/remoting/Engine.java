@@ -849,6 +849,10 @@ public class Engine extends Thread {
             if (conn instanceof HttpsURLConnection httpsConn && sslContext != null) {
                 httpsConn.setSSLSocketFactory(sslContext.getSocketFactory());
             }
+            // ensure retry in case answer never received (lost by a firewall in the infra for example)
+            conn.setConnectTimeout(5000); // Set connection timeout to 5000 milliseconds (5 seconds)
+            conn.setReadTimeout(5000); // Set read timeout to 5000 milliseconds (5 seconds)
+
             int status = conn.getResponseCode();
             conn.disconnect();
             if (status == 200) {
